@@ -2,21 +2,18 @@
 const express = require('express')
 
 // creates an express application using the express module
-const server = express();
+const app = express();
 
-server.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Hello World')
 });
 
-server.get('/hobbits', (req, res) => {
-  const hobbits = [
+app.get('/hobbits', (req, res) => {
+  const characters = [
     {
-      id: 1,
-      name: 'Samwise Gamgee'
-    },
-    {
-      id: 2,
-      name: 'Frodo Baggins'
+      id: Date.now(), // hint: use the shortid npm package to generate it
+      name: "Jane Doe", // String, required
+      bio: "Not Tarzan's Wife, another Jane",  // String, required
     }
   ]
 
@@ -25,7 +22,7 @@ server.get('/hobbits', (req, res) => {
 
 
 // NOTE Client makes a POST request /api/users
-server.post('/api/users', (req, res) => {
+app.post('/api/users', (req, res) => {
   // TODO if the request body is missing the name or bio property:
   // - respond with HTTP status code 400
   // - return the following JSON response { errorMessage: "Please provide name and bio for the user." }
@@ -40,14 +37,14 @@ server.post('/api/users', (req, res) => {
 })
 
 // NOTE Client makes a GET request to /api/users
-server.get('/api/users', (req, res) => {
+app.get('/api/users', (req, res) => {
   // TODO If there's an error in retrieving the users from the database:
   // - respond with HTTP status code 500
   // - return the following JSON object: { errorMessage: "The users information could not be retrieved." }
 })
 
 // NOTE Client makes a GET request to /api/users/:id
-server.get('/api/users/:id', (req, res) => {
+app.get('/api/users/:id', (req, res) => {
   // TODO if the user with the specified id is not found
   // - respond with HTTP status code 404 (not found)
   // - return the following JSON object: { message: "The user with the specified ID does not exist." }
@@ -58,7 +55,7 @@ server.get('/api/users/:id', (req, res) => {
 })
 
 // NOTE Client makes a DELETE request to /api/users/:id
-server.delete('/api/users/:id', (req, res) => {
+app.delete('/api/users/:id', (req, res) => {
   // TODO if the user with the specified id is not found
   // - respond with HTTP status code 404 (not found)
   // - return the following JSON object: { message: "The user with the specified ID does not exist." }
@@ -69,7 +66,7 @@ server.delete('/api/users/:id', (req, res) => {
 })
 
 // NOTE Client makes a PUT request to /api/users/:id
-server.put('/api/users/:id', (req, res) => {
+app.put('/api/users/:id', (req, res) => {
   // TODO if the user with the specified id is not found
   // - respond with HTTP status code 404
   // - return the following JSON object: { message: "The user with the specified ID does not exist." }
@@ -89,4 +86,4 @@ server.put('/api/users/:id', (req, res) => {
 })
 
 
-server.listen(8000, () => console.log(`API running on port 8000`))
+app.listen(8000, () => console.log(`API running on port 8000`))
