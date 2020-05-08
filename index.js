@@ -1,10 +1,10 @@
-// require the express npm module, needs to be added to the project using 'yarn add express'
+// NOTE require the express npm module, needs to be added to the project using 'yarn add express'
 import data from './data/data.json'
-// import express from 'express';
 
 const express = require('express')
-const bodyParser = require('body-parser')
-// creates an express application using the express module
+// const bodyParser = require('body-parser')
+
+// NOTE creates an express application using the express module
 const app = express();
 const PORT = 8000
 const users = data
@@ -38,7 +38,7 @@ app.post('/api/users', (req, res) => {
       gender: gender
     }
     users.push(newUser)
-    res.json(users)
+    res.status(201).json(users)
 
     // REVIEW if there's an error while saving the user:
     // - respond with HTTP status code 500 (server error)
@@ -93,37 +93,64 @@ app.delete('/api/users/:id', (req, res) => {
     // - respond with HTTP status code 500.
     // - return the following JSON object: { errorMessage: "The user could not be removed" }
   } else {
-    res.status(500).json({ errorMessage: "The user could not be removed" })
+    // res.status(500).json({ errorMessage: "The user could not be removed" })
+    res.status(404).json({ message: 'The user could not be found' })
   }
 })
 
 // NOTE Client makes a PUT request to /api/users/:id
 app.put('/api/users/:id', (req, res) => {
   const found = users.find(user => user.id === Number(req.params.id))
+  const changes = req.body;
+  let index = users.findIndex(user => user.id === id)
 
-  // TODO if the user with the specified id is not found
+  // REVIEW if the user with the specified id is not found
   // - respond with HTTP status code 404
   // - return the following JSON object: { message: "The user with the specified ID does not exist." }
-  if (!found) {
-    res.status(404).json({ message: "The user with the specified ID does not exist." })
+  if (index === -1) {
+    res.status(404).json({ message: "The user with the specified ID does not exist" })
 
-    // TODO if the request body is missing the name or bio property
+    // REVIEW if the request body is missing the name or bio property
     // - respond with HTTP status code 400 (bad request)
     // - return the following JSON respons: { errorMessage: "Please provide name and bio for the user" }
-  } else if (found && (!req.body.first_name || !req.body.email)) {
-    res.status(400).json({ errorMessage: "Please provide name and email" })
+  } else if (!req.body.first_name || !req.body.email) {
+    res.status(400).json({ message: "Please provide name and bio for the user" })
+
+    // REVIEW if there's an error when updating the user
+    // - respond with HTTP status code 500
+    // - return the following JSON object: { errorMessage: "The user information could not be modified" }
+  } else if (!user) {
+    res.status(500).json({ errorMessage: "The user information could not be modified" })
+
+    // REVIEW if the user is found and new information is valid
+    // - update the user document in the database using the new information sent in the request body.
+    // - respond with HTTP status code 200 (ok)
+    // - return the newly updated user document
   } else {
-    res.json(users)
+    users[index] = changes
+    res.status(200).json(users[index])
   }
 
-  // TODO if there's an error when updating the user
-  // - respond with HTTP status code 500
-  // - return the following JSON object: { errorMessage: "The user information could not be modified" }
 
-  // TODO if the user is found and new information is invalid
-  // - update the user document in the database using the new information sent in the request body.
-  // - respond with HTTP status code 200 (ok)
-  // - return the newly updated user document
+
+
+
+
+
+})
+
+app.patch('/api/users/:id', (req, res) => {
+  const { id } = req.params
+  const changes = req.body
+
+  let found = users.find(user => user.id === id)
+
+  if (found) {
+    Object.assign(found, changes)
+    res.status(200).json(found)
+  } else {
+    res.status(404).json({ message: "User not found" })
+  }
 })
 
 
