@@ -1,4 +1,4 @@
-import express from 'express'
+// import express from 'express'
 import users from './data/data.json'
 
 const app = express();
